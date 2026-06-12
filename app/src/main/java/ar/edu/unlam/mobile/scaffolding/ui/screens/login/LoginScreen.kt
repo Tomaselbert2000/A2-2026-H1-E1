@@ -1,19 +1,26 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.login
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import ar.edu.unlam.mobile.scaffolding.ui.constant.dimension.Dimens.PADDING_MEDIUM
 
 @Composable
@@ -24,36 +31,33 @@ fun LoginScreen(viewModel: LoginViewModel) {
     val passwordState by viewModel.password.collectAsState()
     val restoreState = { viewModel.restoreStatus() }
 
-    Column() {
+    when (val state = uiState) {
 
-        when (val state = uiState) {
+        is LoginUiState.Idle -> {
+            ShowLoginForm(
+                emailState,
+                passwordState,
+                { newEmailState -> viewModel.email.value = newEmailState },
+                { newPasswordState -> viewModel.password.value = newPasswordState },
+                { viewModel.login() }
+            )
+        }
 
-            is LoginUiState.Idle -> {
-                ShowLoginForm(
-                    emailState,
-                    passwordState,
-                    { newEmailState -> viewModel.email.value = newEmailState },
-                    { newPasswordState -> viewModel.password.value = newPasswordState },
-                    { viewModel.login() }
-                )
-            }
+        is LoginUiState.Loading -> {
+            ShowLoadingStatusOnScreen()
+        }
 
-            is LoginUiState.Loading -> {
-                ShowLoadingStatusOnScreen()
-            }
+        is LoginUiState.Success -> {
+            ShowSuccessScreen(
+                state.responseToken
+            )
+        }
 
-            is LoginUiState.Success -> {
-                ShowSuccessScreen(
-                    state.responseToken
-                )
-            }
-
-            is LoginUiState.Error -> {
-                ShowErrorMessageOnScreen(
-                    state.errorMessage,
-                    restoreState
-                )
-            }
+        is LoginUiState.Error -> {
+            ShowErrorMessageOnScreen(
+                state.errorMessage,
+                restoreState
+            )
         }
     }
 }
@@ -71,37 +75,62 @@ private fun ShowLoginForm(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.surface),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Text(
-            "Correo electrónico",
-            modifier = Modifier.padding(PADDING_MEDIUM),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            "Bienvenido a Tuiter UNLaM",
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(PADDING_MEDIUM)
         )
 
-        TextField(email, onValueChange = { newEmail -> onEmailChange(newEmail) })
-
-        Text(
-            "Contraseña",
-            modifier = Modifier.padding(PADDING_MEDIUM),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+        OutlinedTextField(
+            email,
+            onValueChange = { newEmail -> onEmailChange(newEmail) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(PADDING_MEDIUM),
+            label = { Text("Correo electrónico") }
         )
-        TextField(password, onValueChange = { newPassword -> onPasswordChange(newPassword) })
+
+        OutlinedTextField(
+            password,
+            onValueChange = { newPassword -> onPasswordChange(newPassword) },
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(PADDING_MEDIUM),
+            label = { Text("Contraseña") }
+        )
 
         Button(
             onClick = onLoginButtonClick,
-            colors = ButtonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                disabledContainerColor = MaterialTheme.colorScheme.primary,
-                disabledContentColor = MaterialTheme.colorScheme.onPrimary,
-            )
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(PADDING_MEDIUM)
         ) {
 
             Text("Iniciar sesión")
+        }
+
+        Text(
+            "¿No eres usuario aún?"
+        )
+
+        Button(
+            onClick = {},
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(PADDING_MEDIUM)
+        ) {
+
+            Text("Registrarse")
         }
     }
 }
@@ -109,8 +138,14 @@ private fun ShowLoginForm(
 @Composable
 private fun ShowLoadingStatusOnScreen() {
 
-    CircularProgressIndicator()
-    Text("Cargando...", modifier = Modifier.padding(PADDING_MEDIUM))
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator()
+        Text("Cargando...", modifier = Modifier.padding(PADDING_MEDIUM))
+    }
 }
 
 @Composable
@@ -125,9 +160,24 @@ private fun ShowSuccessScreen(responseToken: String) {
 @Composable
 private fun ShowErrorMessageOnScreen(errorMessage: String, restoreState: () -> Unit) {
 
-    Text(errorMessage, modifier = Modifier.padding(PADDING_MEDIUM))
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
-    Button(onClick = restoreState) {
-        Text("Reintentar")
+        Text("Ocurrió un error al intentar iniciar sesión")
+        Text("Código de estado: $errorMessage", modifier = Modifier.padding(PADDING_MEDIUM))
+
+        Button(
+            onClick = restoreState, colors = ButtonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                disabledContainerColor = MaterialTheme.colorScheme.primary,
+                disabledContentColor = MaterialTheme.colorScheme.onPrimary
+            )
+        ) {
+            Text("Reintentar")
+        }
     }
 }
