@@ -22,12 +22,12 @@ tasks.withType<KotlinCompile>().configureEach {
 
 android {
     namespace = "ar.edu.unlam.mobile.scaffolding"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "ar.edu.unlam.mobile.scaffolding"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
@@ -73,6 +73,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icon)
     testImplementation(libs.junit)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
