@@ -31,7 +31,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
 
                 val response = loginRepository.login(loginRequest)
 
-                uiState.value = LoginUiState.Success(response.responseToken)
+                uiState.value = LoginUiState.Success(response.token)
 
             } catch (exception: Exception) {
 
