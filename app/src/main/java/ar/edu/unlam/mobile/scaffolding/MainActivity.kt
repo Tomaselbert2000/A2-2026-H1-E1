@@ -12,8 +12,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import ar.edu.unlam.mobile.scaffolding.ui.screens.enums.AppScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.login.LoginScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.register.RegisterScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,24 +25,36 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            var isUserLoggedIn by remember { mutableStateOf(false) }
+            var appScreen by remember { mutableStateOf(AppScreen.LOGIN) }
 
             ScaffoldingV2Theme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    if (!isUserLoggedIn) {
 
-                        LoginScreen(
-                            hiltViewModel(),
-                            onLoginSuccess = {
-                                isUserLoggedIn = true
-                            }
-                        )
-                    } else {
+                    when (appScreen) {
 
-                        FeedScreen()
+                        AppScreen.LOGIN -> {
+
+                            LoginScreen(
+                                hiltViewModel(),
+                                onLoginSuccess = { appScreen = AppScreen.FEED },
+                                onNavigateToRegister = {
+                                    appScreen =
+                                        AppScreen.REGISTER
+                                }
+                            )
+                        }
+
+                        AppScreen.REGISTER -> {
+                            RegisterScreen(hiltViewModel()) { appScreen = AppScreen.FEED }
+                        }
+
+                        AppScreen.FEED -> {
+
+                            FeedScreen()
+                        }
                     }
                 }
             }

@@ -6,8 +6,13 @@
     <string name="login_loading_indicator_label">Cargando…</string>
     <string name="login_error_label">Ocurrió un error al iniciar sesión</string>
     <string name="login_error_status_code">Código de estado:</string>
-    <string name="login_retry_label">Reintentar</string>
+    <string name="retry_label">Reintentar</string>
     <string name="sign_in">Iniciar sesión</string>
     <string name="not_user_yet">¿No tienes cuenta aún?</string>
     <string name="sign_up">Registrarse</string>
+    <string name="register_title_label">Crear Usuario</string>
+    <string name="register_name_label">Nombre</string>
+    <string name="confirm_and_create_user">Confirmar datos</string>
+    <string name="reset_form">Limpiar campos</string>
+    <string name="user_creation_error_label">Ocurrió un error al crear el usuario</string>
 </resources>

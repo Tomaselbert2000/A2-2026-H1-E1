@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens.login
+package ar.edu.unlam.mobile.scaffolding.ui.screens.register
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,57 +27,58 @@ import ar.edu.unlam.mobile.scaffolding.ui.constant.dimension.Dimens.PADDING_MEDI
 import ar.edu.unlam.mobile.scaffolding.ui.constant.dimension.Dimens.PADDING_SMALL
 
 @Composable
-fun LoginScreen(
-    loginViewModel: LoginViewModel,
-    onLoginSuccess: () -> Unit,
-    onNavigateToRegister: () -> Unit
-) {
+fun RegisterScreen(registerViewModel: RegisterViewModel, onRegisterSuccess: () -> Unit) {
 
-    val uiState by loginViewModel.uiState.collectAsState()
-    val emailState by loginViewModel.email.collectAsState()
-    val passwordState by loginViewModel.password.collectAsState()
-    val restoreState = { loginViewModel.restoreStatus() }
+    val uiState by registerViewModel.uiState.collectAsState()
+    val nameState by registerViewModel.name.collectAsState()
+    val emailState by registerViewModel.email.collectAsState()
+    val passwordState by registerViewModel.password.collectAsState()
+
+    val resetForm = { registerViewModel.resetForm() }
 
     when (val state = uiState) {
 
-        is LoginUiState.Idle -> {
-            ShowLoginForm(
+        is RegisterUiState.Idle -> {
+
+            ShowRegisterForm(
+                nameState,
                 emailState,
                 passwordState,
-                { newEmailState -> loginViewModel.email.value = newEmailState },
-                { newPasswordState -> loginViewModel.password.value = newPasswordState },
-                { loginViewModel.login() },
-                onNavigateToRegister
+                { newNameState -> registerViewModel.updateName(newNameState) },
+                { newEmailState -> registerViewModel.updateEmail(newEmailState) },
+                { newPasswordState -> registerViewModel.updatePassword(newPasswordState) },
+                { registerViewModel.register() },
+                resetForm
             )
         }
 
-        is LoginUiState.Loading -> {
+        is RegisterUiState.Loading -> {
+
             ShowLoadingStatusOnScreen()
         }
 
-        is LoginUiState.Success -> {
+        is RegisterUiState.Success -> {
 
-            onLoginSuccess()
+            onRegisterSuccess()
         }
 
-        is LoginUiState.Error -> {
-            ShowErrorMessageOnScreen(
-                restoreState,
-                state.errorMessage
-            )
+        is RegisterUiState.Error -> {
+
+            ShowRegisterErrorScreen(state.errorMessage) { registerViewModel.setUiStateAsIdle() }
         }
     }
 }
 
-
 @Composable
-private fun ShowLoginForm(
+fun ShowRegisterForm(
+    name: String,
     email: String,
     password: String,
+    onNameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    onLoginButtonClick: () -> Unit,
-    onRegisterButtonClick: () -> Unit
+    onRegisterButtonClick: () -> Unit,
+    onResetButtonClick: () -> Unit
 ) {
 
     Column(
@@ -87,11 +88,21 @@ private fun ShowLoginForm(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         TuiterTextLabel(
-            R.string.login_title_label,
+            R.string.register_title_label,
             MaterialTheme.typography.headlineLarge,
-            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.onSurface,
             Modifier.padding(PADDING_MEDIUM)
+        )
+
+        TuiterOutlinedTextField(
+            name,
+            { newName -> onNameChange(newName) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(PADDING_MEDIUM),
+            R.string.register_name_label
         )
 
         TuiterOutlinedTextField(
@@ -115,24 +126,15 @@ private fun ShowLoginForm(
         )
 
         TuiterButton(
-            R.string.sign_in,
-            onLoginButtonClick,
+            R.string.confirm_and_create_user,
+            onRegisterButtonClick,
             ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(PADDING_MEDIUM)
-        )
-
-        TuiterTextLabel(
-            R.string.not_user_yet,
-            MaterialTheme.typography.titleSmall,
-            MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(PADDING_MEDIUM)
         )
 
         TuiterButton(
-            R.string.sign_up,
-            onRegisterButtonClick,
+            R.string.reset_form,
+            onResetButtonClick,
             ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
             modifier = Modifier
                 .fillMaxWidth()
@@ -142,7 +144,7 @@ private fun ShowLoginForm(
 }
 
 @Composable
-private fun ShowErrorMessageOnScreen(restoreState: () -> Unit, errorMessage: String) {
+private fun ShowRegisterErrorScreen(errorMessage: String, onRetryButtonClick: () -> Unit) {
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -151,33 +153,27 @@ private fun ShowErrorMessageOnScreen(restoreState: () -> Unit, errorMessage: Str
     ) {
 
         Row(horizontalArrangement = Arrangement.spacedBy(PADDING_SMALL)) {
+
             TuiterTextLabel(
-                R.string.login_error_label,
+                R.string.user_creation_error_label,
                 MaterialTheme.typography.titleMedium,
                 MaterialTheme.colorScheme.error,
                 Modifier.padding(PADDING_MEDIUM)
             )
-
-            Text(
-                errorMessage,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(PADDING_MEDIUM)
-            )
         }
 
-        TuiterTextLabel(
-            R.string.login_error_status_code,
-            MaterialTheme.typography.titleMedium,
-            MaterialTheme.colorScheme.error,
-            Modifier.padding(PADDING_MEDIUM)
+        Text(
+            errorMessage,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(PADDING_MEDIUM)
         )
 
         TuiterButton(
             R.string.retry_label,
-            restoreState,
+            onRetryButtonClick,
             ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            modifier = Modifier
+            modifier = Modifier.padding(PADDING_MEDIUM)
         )
     }
 }
