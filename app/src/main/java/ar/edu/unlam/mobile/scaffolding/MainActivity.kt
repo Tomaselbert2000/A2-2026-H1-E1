@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.FEED -> {
 
-                            FeedScreen(onNavigateToCreatePost = {
+                            FeedScreen(hiltViewModel(), onNavigateToCreatePost = {
                                 appScreen = AppScreen.CREATE_NEW_POST
                             }
                             )

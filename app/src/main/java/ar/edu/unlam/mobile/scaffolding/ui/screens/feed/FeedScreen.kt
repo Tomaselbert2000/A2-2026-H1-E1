@@ -1,6 +1,9 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.feed
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
@@ -14,12 +17,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import ar.edu.unlam.mobile.scaffolding.ui.components.feed.HomeFloatingActionButton
+import ar.edu.unlam.mobile.scaffolding.ui.components.post.PostCard
+import ar.edu.unlam.mobile.scaffolding.ui.components.shared.ShowLoadingStatusOnScreen
 import ar.edu.unlam.mobile.scaffolding.ui.constant.dimension.Dimens.PADDING_MEDIUM
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.ShowErrorMessageOnScreen
 
 @Composable
-fun FeedScreen(onNavigateToCreatePost: () -> Unit) {
+fun FeedScreen(feedViewModel: FeedViewModel, onNavigateToCreatePost: () -> Unit) {
+
+    val uiState by feedViewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = { TopBar() },
@@ -27,7 +37,10 @@ fun FeedScreen(onNavigateToCreatePost: () -> Unit) {
         floatingActionButton = { HomeFloatingActionButton(onNavigateToCreatePost) },
     ) { paddingValues ->
 
-        Content(modifier = Modifier.padding(paddingValues))
+        FeedContent(
+            modifier = Modifier.padding(paddingValues),
+            uiState
+        ) { feedViewModel.reloadPostList() }
     }
 }
 
@@ -48,9 +61,37 @@ private fun TopBar() {
 }
 
 @Composable
-private fun Content(modifier: Modifier) {
+private fun FeedContent(modifier: Modifier, uiState: FeedUiState, onRetryAction: () -> Unit) {
 
-    Text("Menu principal", modifier = modifier)
+    Box(modifier) {
+
+        when (uiState) {
+
+            is FeedUiState.Loading -> {
+
+                ShowLoadingStatusOnScreen()
+            }
+
+            is FeedUiState.Success -> {
+
+                LazyColumn {
+
+                    items(uiState.posts) { post ->
+
+                        PostCard(post)
+                    }
+                }
+            }
+
+            is FeedUiState.Error -> {
+
+                ShowErrorMessageOnScreen(
+                    onRetryAction,
+                    errorMessage = uiState.message
+                )
+            }
+        }
+    }
 }
 
 @Composable

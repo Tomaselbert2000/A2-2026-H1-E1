@@ -4,12 +4,15 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.login.Log
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.login.LoginResponse
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.post.PostCreationRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.post.PostCreationResponse
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.post.PostResponse
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.register.RegisterRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.register.RegisterResponse
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface TuiterApiService {
 
@@ -23,5 +26,16 @@ interface TuiterApiService {
 
     @POST("v1/me/tuits")
     @Headers("Application-Token: f6b67b050d16483ee05ce7563a5f8f246a85ea4eec3cde1064a3bc82ddddd921")
-    suspend fun createPost(@Body request: PostCreationRequest, @Header("Authorization") userToken: String): PostCreationResponse
+    suspend fun createPost(
+        @Body request: PostCreationRequest,
+        @Header("Authorization") userToken: String
+    ): PostCreationResponse
+
+    @GET("v1/me/feed")
+    @Headers("Application-Token: f6b67b050d16483ee05ce7563a5f8f246a85ea4eec3cde1064a3bc82ddddd921")
+    suspend fun getPosts(
+        @Header("Authorization") userToken: String,
+        @Query("page") pageNumber: Int,
+        @Query("only_parents") onlyParents: Boolean
+    ): List<PostResponse>
 }

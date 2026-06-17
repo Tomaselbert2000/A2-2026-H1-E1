@@ -10,5 +10,4 @@ object Dimens {
 
     val AVATAR_SIZE = 48.dp
 
-    val TOP_APP_BAR_EXPANDED_HEIGHT = 24.dp
 }

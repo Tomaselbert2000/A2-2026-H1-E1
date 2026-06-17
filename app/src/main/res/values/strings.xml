@@ -15,4 +15,6 @@
     <string name="confirm_and_create_user">Confirmar datos</string>
     <string name="reset_form">Limpiar campos</string>
     <string name="user_creation_error_label">Ocurrió un error al crear el usuario</string>
+    <string name="post_likes_label">Me gusta</string>
+    <string name="post_comments_label">Comentarios</string>
 </resources>
