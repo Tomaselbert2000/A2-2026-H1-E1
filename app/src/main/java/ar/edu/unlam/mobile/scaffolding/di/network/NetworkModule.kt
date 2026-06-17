@@ -1,9 +1,11 @@
-package ar.edu.unlam.mobile.scaffolding.di
+package ar.edu.unlam.mobile.scaffolding.di.network
 
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.interfaces.TuiterApiService
 import ar.edu.unlam.mobile.scaffolding.data.repositories.implementation.LoginRepositoryImpl
+import ar.edu.unlam.mobile.scaffolding.data.repositories.implementation.PostRepositoryImpl
 import ar.edu.unlam.mobile.scaffolding.data.repositories.implementation.RegisterRepositoryImpl
 import ar.edu.unlam.mobile.scaffolding.data.repositories.interfaces.LoginRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.interfaces.PostRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.interfaces.RegisterRepository
 import dagger.Module
 import dagger.Provides
@@ -43,8 +45,15 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRegisterRepositoryInstance(tuiterApiService: TuiterApiService) : RegisterRepository {
+    fun provideRegisterRepositoryInstance(tuiterApiService: TuiterApiService): RegisterRepository {
 
         return RegisterRepositoryImpl(tuiterApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun providePostRepositoryInstance(tuiterApiService: TuiterApiService): PostRepository {
+
+        return PostRepositoryImpl(tuiterApiService)
     }
 }

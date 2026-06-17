@@ -13,14 +13,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import ar.edu.unlam.mobile.scaffolding.ui.components.feed.HomeFloatingActionButton
 import ar.edu.unlam.mobile.scaffolding.ui.constant.dimension.Dimens.PADDING_MEDIUM
 
 @Composable
-fun FeedScreen() {
+fun FeedScreen(onNavigateToCreatePost: () -> Unit) {
 
     Scaffold(
         topBar = { TopBar() },
-        bottomBar = { BottomBar() }
+        bottomBar = { BottomBar() },
+        floatingActionButton = { HomeFloatingActionButton(onNavigateToCreatePost) },
     ) { paddingValues ->
 
         Content(modifier = Modifier.padding(paddingValues))

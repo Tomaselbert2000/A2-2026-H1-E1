@@ -4,16 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.register.RegisterRequest
 import ar.edu.unlam.mobile.scaffolding.data.repositories.interfaces.RegisterRepository
+import ar.edu.unlam.mobile.scaffolding.ui.constant.text_constant.TextConstant.BLANK_FIELDS_ERROR_MESSAGE
+import ar.edu.unlam.mobile.scaffolding.ui.constant.text_constant.TextConstant.UNKNOWN_ERROR_MESSAGE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-private const val UNKNOWN_ERROR_MESSAGE = "Error desconocido"
-private const val BLANK_FIELDS_ERROR_MESSAGE =
-    "Ninguno de los campos de registro puede estar en blanco"
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(private val registerRepository: RegisterRepository) :

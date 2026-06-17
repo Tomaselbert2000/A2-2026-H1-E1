@@ -2,25 +2,37 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.TokenManager
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.login.LoginRequest
 import ar.edu.unlam.mobile.scaffolding.data.repositories.interfaces.LoginRepository
+import ar.edu.unlam.mobile.scaffolding.ui.constant.text_constant.TextConstant.UNKNOWN_ERROR_MESSAGE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val loginRepository: LoginRepository) :
+class LoginViewModel @Inject constructor(
+    private val loginRepository: LoginRepository,
+    private val tokenManager: TokenManager
+) :
     ViewModel() {
 
-    var email = MutableStateFlow("")
-    var password = MutableStateFlow("")
-    var uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
+    private val _email = MutableStateFlow("")
+    val email: StateFlow<String> = _email.asStateFlow()
+
+    private val _password = MutableStateFlow("")
+    val password: StateFlow<String> = _password.asStateFlow()
+
+    private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
+    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
     fun login() {
         viewModelScope.launch {
 
-            uiState.value = LoginUiState.Loading
+            _uiState.value = LoginUiState.Loading
 
             try {
 
@@ -31,20 +43,32 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
 
                 val response = loginRepository.login(loginRequest)
 
-                uiState.value = LoginUiState.Success(response.token)
+                _uiState.value = LoginUiState.Success(response.token)
+
+                tokenManager.saveToken(response.token)
 
             } catch (exception: Exception) {
 
-                val responseMessage = exception.message ?: "Error desconocido"
+                val responseMessage = exception.message ?: UNKNOWN_ERROR_MESSAGE
 
-                uiState.value = LoginUiState.Error(responseMessage)
+                _uiState.value = LoginUiState.Error(responseMessage)
             }
         }
     }
 
     fun restoreStatus() {
 
-        uiState.value = LoginUiState.Idle
+        _uiState.value = LoginUiState.Idle
+    }
+
+    fun updateEmailState(newEmailState: String) {
+
+        _email.value = newEmailState
+    }
+
+    fun updatePasswordState(newPasswordState: String) {
+
+        _password.value = newPasswordState
     }
 }
 

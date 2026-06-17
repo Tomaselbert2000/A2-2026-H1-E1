@@ -15,6 +15,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.enums.AppScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.login.LoginScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreationScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.register.RegisterScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,7 +54,18 @@ class MainActivity : ComponentActivity() {
 
                         AppScreen.FEED -> {
 
-                            FeedScreen()
+                            FeedScreen(onNavigateToCreatePost = {
+                                appScreen = AppScreen.CREATE_NEW_POST
+                            }
+                            )
+                        }
+
+                        AppScreen.CREATE_NEW_POST -> {
+
+                            PostCreationScreen(
+                                hiltViewModel(),
+                                onPostAction = { appScreen = AppScreen.FEED }
+                            ) { appScreen = AppScreen.FEED }
                         }
                     }
                 }

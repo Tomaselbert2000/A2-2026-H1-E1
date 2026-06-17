@@ -4,5 +4,6 @@ enum class AppScreen {
 
     LOGIN,
     REGISTER,
-    FEED
+    FEED,
+    CREATE_NEW_POST
 }

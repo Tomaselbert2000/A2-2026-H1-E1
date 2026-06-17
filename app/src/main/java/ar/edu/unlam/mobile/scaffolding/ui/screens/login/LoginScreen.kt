@@ -44,8 +44,8 @@ fun LoginScreen(
             ShowLoginForm(
                 emailState,
                 passwordState,
-                { newEmailState -> loginViewModel.email.value = newEmailState },
-                { newPasswordState -> loginViewModel.password.value = newPasswordState },
+                { newEmailState -> loginViewModel.updateEmailState(newEmailState) },
+                { newPasswordState -> loginViewModel.updatePasswordState(newPasswordState) },
                 { loginViewModel.login() },
                 onNavigateToRegister
             )
