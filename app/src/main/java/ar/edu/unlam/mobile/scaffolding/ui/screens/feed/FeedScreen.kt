@@ -2,7 +2,9 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.feed
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -62,16 +64,34 @@ private fun BottomBar() {
             icon = {
                 Icon(Icons.Default.Home, contentDescription = null)
             },
-            label = { BottomBarTextLabel() }
+            label = { BottomBarTextLabel("Inicio") }
+        )
+
+        NavigationBarItem(
+            selected = false,
+            onClick = {},
+            icon = {
+                Icon(Icons.Default.AccountCircle, contentDescription = null)
+            },
+            label = { BottomBarTextLabel("Perfil") }
+        )
+
+        NavigationBarItem(
+            selected = false,
+            onClick = {},
+            icon = {
+                Icon(Icons.Default.Settings, contentDescription = null)
+            },
+            label = { BottomBarTextLabel("Ajustes") }
         )
     }
 }
 
 @Composable
-private fun BottomBarTextLabel() {
+private fun BottomBarTextLabel(textToShow: String) {
 
     Text(
-        text = "Inicio",
+        text = textToShow,
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurface
     )
