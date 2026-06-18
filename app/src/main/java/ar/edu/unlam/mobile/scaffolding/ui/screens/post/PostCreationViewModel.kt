@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.Draft
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.TokenManager
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.post.PostCreationRequest
 import ar.edu.unlam.mobile.scaffolding.data.repositories.interfaces.PostRepository
@@ -24,8 +25,23 @@ class PostCreationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<PostCreationUiState>(PostCreationUiState.Idle)
     val uiState: StateFlow<PostCreationUiState> = _uiState.asStateFlow()
 
+    private val _draftId: MutableStateFlow<Int> = MutableStateFlow(0)
+
     private val _message = MutableStateFlow("")
     val message: StateFlow<String> = _message.asStateFlow()
+
+    init {
+
+        viewModelScope.launch {
+
+            postRepository.getAllDrafts().collect {
+
+                    drafts ->
+                _draftId.value = drafts.lastOrNull()?.postId ?: 0
+                _message.value = drafts.lastOrNull()?.postMessage ?: ""
+            }
+        }
+    }
 
     fun createPost() {
 
@@ -44,6 +60,11 @@ class PostCreationViewModel @Inject constructor(
 
                 _uiState.value = PostCreationUiState.Success(response.message)
 
+                if (_draftId.value > 0) {
+
+                    postRepository.deleteDraft(_draftId.value)
+                }
+
             } catch (exception: Exception) {
 
                 val responseErrorMessage = exception.message ?: UNKNOWN_ERROR_MESSAGE
@@ -53,9 +74,16 @@ class PostCreationViewModel @Inject constructor(
         }
     }
 
-    fun createDraft() {
+    fun createDraft(draftMessage: String) {
 
+        viewModelScope.launch {
 
+            val draft = Draft(postMessage = draftMessage)
+
+            postRepository.saveDraft(draft)
+
+            _uiState.value = PostCreationUiState.DraftSaved
+        }
     }
 
     fun onMessageChange(newMessage: String) {
@@ -73,6 +101,7 @@ sealed interface PostCreationUiState {
 
     data object Idle : PostCreationUiState
     data object Loading : PostCreationUiState
+    data object DraftSaved : PostCreationUiState
     data class Success(val responseMessage: String) : PostCreationUiState
     data class Error(val errorMessage: String) : PostCreationUiState
 }

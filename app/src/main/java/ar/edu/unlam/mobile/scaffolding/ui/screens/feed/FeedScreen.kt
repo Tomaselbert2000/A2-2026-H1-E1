@@ -17,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -30,6 +31,11 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.post.ShowErrorMessageOnScreen
 fun FeedScreen(feedViewModel: FeedViewModel, onNavigateToCreatePost: () -> Unit) {
 
     val uiState by feedViewModel.uiState.collectAsState()
+
+    LaunchedEffect(true) {
+
+        feedViewModel.loadPosts()
+    }
 
     Scaffold(
         topBar = { TopBar() },

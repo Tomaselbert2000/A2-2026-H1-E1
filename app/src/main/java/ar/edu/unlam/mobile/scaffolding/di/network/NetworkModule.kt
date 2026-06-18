@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.di.network
 
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.DraftDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.TokenManager
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.interfaces.TuiterApiService
 import ar.edu.unlam.mobile.scaffolding.data.repositories.implementation.LoginRepositoryImpl
@@ -55,9 +56,10 @@ object NetworkModule {
     @Singleton
     fun providePostRepositoryInstance(
         tuiterApiService: TuiterApiService,
-        tokenManager: TokenManager
+        tokenManager: TokenManager,
+        draftDao: DraftDao
     ): PostRepository {
 
-        return PostRepositoryImpl(tuiterApiService, tokenManager)
+        return PostRepositoryImpl(tuiterApiService, tokenManager, draftDao)
     }
 }

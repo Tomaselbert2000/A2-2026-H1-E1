@@ -25,6 +25,7 @@ class FeedViewModel @Inject constructor(
         loadPosts()
     }
 
+
     fun loadPosts() {
 
         viewModelScope.launch {

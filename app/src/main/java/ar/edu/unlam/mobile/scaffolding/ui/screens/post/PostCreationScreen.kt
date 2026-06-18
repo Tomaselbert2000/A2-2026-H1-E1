@@ -30,12 +30,15 @@ import ar.edu.unlam.mobile.scaffolding.ui.constant.dimension.Dimens.PADDING_SMAL
 private const val DRAFT_BUTTON_TEXT = "Borrador"
 private const val POST_BUTTON_TEXT = "Publicar"
 private const val TEXTFIELD_PROMPT_TEXT = "¿Qué estás pensando?..."
+private const val DRAFT_CREATED_SNACKBAR_TEXT = "¡Tu borrador ha sido creado!"
+private const val POST_SNACKBAR_TEXT = "¡Tu post ha sido publicado!"
 
 @Composable
 fun PostCreationScreen(
     postCreationViewModel: PostCreationViewModel,
     onPostAction: () -> Unit,
     onCancelAction: () -> Unit,
+    onShowSnackbar: (String) -> Unit
 ) {
 
     val message by postCreationViewModel.message.collectAsState()
@@ -48,10 +51,14 @@ fun PostCreationScreen(
 
             ShowPostCreationForm(
                 message,
-                { newMessage -> postCreationViewModel.onMessageChange(newMessage) },
-                { postCreationViewModel.createDraft() },
-                { postCreationViewModel.createPost() },
-                onCancelAction
+                onPostMessageChangeAction = { newMessage ->
+                    postCreationViewModel.onMessageChange(
+                        newMessage
+                    )
+                },
+                onDraftAction = { postCreationViewModel.createDraft(message) },
+                onPostAction = { postCreationViewModel.createPost() },
+                onCancelAction = onCancelAction
             )
         }
 
@@ -60,8 +67,17 @@ fun PostCreationScreen(
             ShowLoadingStatusOnScreen()
         }
 
+        is PostCreationUiState.DraftSaved -> {
+
+            onShowSnackbar(DRAFT_CREATED_SNACKBAR_TEXT)
+            restoreState()
+            onCancelAction()
+        }
+
         is PostCreationUiState.Success -> {
 
+            onShowSnackbar(POST_SNACKBAR_TEXT)
+            restoreState()
             onPostAction()
         }
 
