@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            var appScreen by remember { mutableStateOf(AppScreen.LOGIN) }
+            var currentScreen by remember { mutableStateOf(AppScreen.LOGIN) }
             val snackbarHostState = remember { SnackbarHostState() }
             val coroutineScope = rememberCoroutineScope()
 
@@ -49,28 +49,28 @@ class MainActivity : ComponentActivity() {
 
                         Surface(modifier = Modifier.padding(paddingValues)) {
 
-                            when (appScreen) {
+                            when (currentScreen) {
 
                                 AppScreen.LOGIN -> {
 
                                     LoginScreen(
                                         hiltViewModel(),
-                                        onLoginSuccess = { appScreen = AppScreen.FEED },
+                                        onLoginSuccess = { currentScreen = AppScreen.FEED },
                                         onNavigateToRegister = {
-                                            appScreen =
+                                            currentScreen =
                                                 AppScreen.REGISTER
                                         }
                                     )
                                 }
 
                                 AppScreen.REGISTER -> {
-                                    RegisterScreen(hiltViewModel()) { appScreen = AppScreen.FEED }
+                                    RegisterScreen(hiltViewModel()) { currentScreen = AppScreen.FEED }
                                 }
 
                                 AppScreen.FEED -> {
 
                                     FeedScreen(hiltViewModel(), onNavigateToCreatePost = {
-                                        appScreen = AppScreen.CREATE_NEW_POST
+                                        currentScreen = AppScreen.CREATE_NEW_POST
                                     }
                                     )
                                 }
@@ -79,8 +79,8 @@ class MainActivity : ComponentActivity() {
 
                                     PostCreationScreen(
                                         postCreationViewModel = hiltViewModel(),
-                                        onPostAction = { appScreen = AppScreen.FEED },
-                                        onCancelAction = { appScreen = AppScreen.FEED }
+                                        onPostAction = { currentScreen = AppScreen.FEED },
+                                        onCancelAction = { currentScreen = AppScreen.FEED }
                                     ) { snackBarMessage ->
 
                                         launchSnackBarCoroutine(
