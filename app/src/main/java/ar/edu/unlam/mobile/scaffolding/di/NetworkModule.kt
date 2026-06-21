@@ -19,15 +19,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideGson(): Gson =
-        GsonBuilder().create()
+    fun provideGson(): Gson = GsonBuilder().create()
 
     @Provides
     @Singleton
     fun provideRetrofit(gson: Gson): Retrofit =
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+        Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create(gson))
             .build()
 
     @Provides
