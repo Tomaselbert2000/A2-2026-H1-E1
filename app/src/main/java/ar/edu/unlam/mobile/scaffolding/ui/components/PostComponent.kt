@@ -74,7 +74,9 @@ fun PostComponent(
                     )
 
                     Text(
-                        text = " @${post.author.lowercase().replace(" ", "")} · ${formatDate(post.date)}",
+                        text = " @${
+                            post.author.lowercase().replace(" ", "")
+                        } · ${formatDate(post.date)}",
                         style = MaterialTheme.typography.bodyMedium,
                     )
 
