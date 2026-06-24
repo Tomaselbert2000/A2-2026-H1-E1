@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.di.network
 
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.DraftDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.TokenManager
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.PostApiService
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.interfaces.TuiterApiService
 import ar.edu.unlam.mobile.scaffolding.data.repositories.implementation.LoginRepositoryImpl
 import ar.edu.unlam.mobile.scaffolding.data.repositories.implementation.PostRepositoryImpl
@@ -11,6 +12,8 @@ import ar.edu.unlam.mobile.scaffolding.data.repositories.interfaces.LoginReposit
 import ar.edu.unlam.mobile.scaffolding.data.repositories.interfaces.PostRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.interfaces.ProfileInfoRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.interfaces.RegisterRepository
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,11 +27,11 @@ import javax.inject.Singleton
 object NetworkModule {
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit =
+    fun provideRetrofit(gson: Gson): Retrofit =
         Retrofit
             .Builder()
-            .baseUrl("https://tuiter.fragua.com.ar/api/")
-            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl("https://tuiter.fragua.com.ar/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
 
     @Provides
@@ -55,4 +58,12 @@ object NetworkModule {
     @Singleton
     fun provideProfileInfoRepositoryInstance(tuiterApiService: TuiterApiService): ProfileInfoRepository =
         ProfileInfoRepositoryImpl(tuiterApiService)
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson = GsonBuilder().create()
+
+    @Provides
+    @Singleton
+    fun providePostApiService(retrofit: Retrofit): PostApiService = retrofit.create(PostApiService::class.java)
 }

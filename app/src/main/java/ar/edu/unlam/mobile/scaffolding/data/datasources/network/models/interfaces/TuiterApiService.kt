@@ -18,26 +18,26 @@ import retrofit2.http.PUT
 import retrofit2.http.Query
 
 interface TuiterApiService {
-    @POST("v1/login")
+    @POST("api/v1/login")
     @Headers("Application-Token: f6b67b050d16483ee05ce7563a5f8f246a85ea4eec3cde1064a3bc82ddddd921")
     suspend fun login(
         @Body request: LoginRequest,
     ): LoginResponse
 
-    @POST("v1/users")
+    @POST("api/v1/users")
     @Headers("Application-Token: f6b67b050d16483ee05ce7563a5f8f246a85ea4eec3cde1064a3bc82ddddd921")
     suspend fun register(
         @Body request: RegisterRequest,
     ): RegisterResponse
 
-    @POST("v1/me/tuits")
+    @POST("api/v1/me/tuits")
     @Headers("Application-Token: f6b67b050d16483ee05ce7563a5f8f246a85ea4eec3cde1064a3bc82ddddd921")
     suspend fun createPost(
         @Body request: PostCreationRequest,
         @Header("Authorization") userToken: String,
     ): PostCreationResponse
 
-    @GET("v1/me/feed")
+    @GET("api/v1/me/feed")
     @Headers("Application-Token: f6b67b050d16483ee05ce7563a5f8f246a85ea4eec3cde1064a3bc82ddddd921")
     suspend fun getPosts(
         @Header("Authorization") userToken: String,
@@ -45,13 +45,13 @@ interface TuiterApiService {
         @Query("only_parents") onlyParents: Boolean,
     ): List<PostResponse>
 
-    @GET("v1/me/profile")
+    @GET("api/v1/me/profile")
     @Headers("Application-Token: f6b67b050d16483ee05ce7563a5f8f246a85ea4eec3cde1064a3bc82ddddd921")
     suspend fun getProfileInfo(
         @Header("Authorization") userToken: String,
     ): ProfileInfoResponse
 
-    @PUT("v1/me/profile")
+    @PUT("api/v1/me/profile")
     @Headers("Application-Token: f6b67b050d16483ee05ce7563a5f8f246a85ea4eec3cde1064a3bc82ddddd921")
     suspend fun updateProfile(
         @Header("Authorization") userToken: String,
