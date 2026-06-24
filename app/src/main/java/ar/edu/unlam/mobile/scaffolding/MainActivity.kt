@@ -21,6 +21,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.enums.AppScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.login.LoginScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreationScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.profile.ProfileScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.register.RegisterScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,7 +33,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
             var currentScreen by remember { mutableStateOf(AppScreen.LOGIN) }
             val snackbarHostState = remember { SnackbarHostState() }
             val coroutineScope = rememberCoroutineScope()
@@ -42,52 +42,56 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-
                     Scaffold(
-                        snackbarHost = { SnackbarHost(snackbarHostState) }
+                        snackbarHost = { SnackbarHost(snackbarHostState) },
                     ) { paddingValues ->
 
                         Surface(modifier = Modifier.padding(paddingValues)) {
-
                             when (currentScreen) {
-
                                 AppScreen.LOGIN -> {
-
                                     LoginScreen(
                                         hiltViewModel(),
                                         onLoginSuccess = { currentScreen = AppScreen.FEED },
                                         onNavigateToRegister = {
                                             currentScreen =
                                                 AppScreen.REGISTER
-                                        }
+                                        },
                                     )
                                 }
 
                                 AppScreen.REGISTER -> {
-                                    RegisterScreen(hiltViewModel()) { currentScreen = AppScreen.FEED }
+                                    RegisterScreen(hiltViewModel()) {
+                                        currentScreen = AppScreen.FEED
+                                    }
                                 }
 
                                 AppScreen.FEED -> {
-
-                                    FeedScreen(hiltViewModel(), onNavigateToCreatePost = {
-                                        currentScreen = AppScreen.CREATE_NEW_POST
-                                    }
+                                    FeedScreen(
+                                        hiltViewModel(),
+                                        onNavigateToCreatePost = {
+                                            currentScreen = AppScreen.CREATE_NEW_POST
+                                        },
                                     )
                                 }
 
                                 AppScreen.CREATE_NEW_POST -> {
-
                                     PostCreationScreen(
                                         postCreationViewModel = hiltViewModel(),
                                         onPostAction = { currentScreen = AppScreen.FEED },
-                                        onCancelAction = { currentScreen = AppScreen.FEED }
+                                        onCancelAction = { currentScreen = AppScreen.FEED },
                                     ) { snackBarMessage ->
 
                                         launchSnackBarCoroutine(
                                             snackbarHostState,
                                             snackBarMessage,
-                                            coroutineScope
+                                            coroutineScope,
                                         )
+                                    }
+                                }
+
+                                AppScreen.EDIT_PROFILE_INFO -> {
+                                    ProfileScreen(hiltViewModel()) {
+                                        currentScreen = AppScreen.FEED
                                     }
                                 }
                             }
@@ -101,7 +105,7 @@ class MainActivity : ComponentActivity() {
     fun launchSnackBarCoroutine(
         snackbarHostState: SnackbarHostState,
         snackBarMessage: String,
-        coroutineScope: CoroutineScope
+        coroutineScope: CoroutineScope,
     ) {
         coroutineScope.launch { snackbarHostState.showSnackbar(snackBarMessage) }
     }

@@ -9,15 +9,13 @@ import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "draft_table")
 data class Draft(
-
     @PrimaryKey(autoGenerate = true)
     val postId: Int = 0,
-    val postMessage: String
+    val postMessage: String,
 )
 
 @Dao
 interface DraftDao {
-
     @Insert
     suspend fun insert(draft: Draft)
 
