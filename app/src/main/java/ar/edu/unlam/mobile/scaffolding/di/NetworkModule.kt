@@ -14,7 +14,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
     private const val BASE_URL = "https://tuiter.fragua.com.ar/"
 
     @Provides
@@ -24,11 +23,13 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(gson: Gson): Retrofit =
-        Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create(gson))
+        Retrofit
+            .Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
 
     @Provides
     @Singleton
-    fun providePostApiService(retrofit: Retrofit): PostApiService =
-        retrofit.create(PostApiService::class.java)
+    fun providePostApiService(retrofit: Retrofit): PostApiService = retrofit.create(PostApiService::class.java)
 }

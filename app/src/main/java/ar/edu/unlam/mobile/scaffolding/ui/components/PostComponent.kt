@@ -42,19 +42,19 @@ fun PostComponent(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-
             Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
+                modifier =
+                    Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
@@ -64,7 +64,6 @@ fun PostComponent(
             }
 
             Column(modifier = Modifier.weight(1f)) {
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -96,9 +95,10 @@ fun PostComponent(
                 )
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -146,27 +146,27 @@ private fun PostAction(
     }
 }
 
-private fun formatDate(date: String): String {
-    return try {
+private fun formatDate(date: String): String =
+    try {
         val parts = date.take(10).split("-")
         "${parts[2]}/${parts[1]}/${parts[0]}"
     } catch (_: Exception) {
         date
     }
-}
 
 @Preview(showBackground = true)
 @Composable
 fun PostComponentPreview() {
     PostComponent(
-        post = PostUiModel(
-            id = 1,
-            message = "Hola, esta es una prueba del tweet",
-            author = "Paloma Aguirre",
-            avatarUrl = "",
-            likes = 15,
-            liked = false,
-            date = "2026-06-20",
-        ),
+        post =
+            PostUiModel(
+                id = 1,
+                message = "Hola, esta es una prueba del tweet",
+                author = "Paloma Aguirre",
+                avatarUrl = "",
+                likes = 15,
+                liked = false,
+                date = "2026-06-20",
+            ),
     )
 }
