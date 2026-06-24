@@ -22,12 +22,12 @@ tasks.withType<KotlinCompile>().configureEach {
 
 android {
     namespace = "ar.edu.unlam.mobile.scaffolding"
-    compileSdk = 37
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "ar.edu.unlam.mobile.scaffolding"
         minSdk = 24
-        targetSdk = 37
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -61,6 +61,8 @@ android {
 }
 
 dependencies {
+
+    // Base
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.datastore.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -82,17 +84,21 @@ dependencies {
     testImplementation(libs.androidx.room.testing)
     implementation(libs.androidx.room.paging)
     testImplementation(libs.junit)
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+
+    // Dagger + Hilt
     implementation(libs.google.dagger.hilt.android)
     ksp(libs.google.dagger.hilt.android.compiler)
     implementation(libs.google.dagger.hilt.android.testing)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
+    androidTestImplementation(libs.google.dagger.hilt.android.testing)
+    testImplementation(libs.google.dagger.hilt.android.testing)
 }
