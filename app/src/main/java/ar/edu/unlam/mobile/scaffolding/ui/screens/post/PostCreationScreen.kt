@@ -26,6 +26,8 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.shared.ShowLoadingStatusOnS
 import ar.edu.unlam.mobile.scaffolding.ui.constant.dimension.Dimens.PADDING_LARGE
 import ar.edu.unlam.mobile.scaffolding.ui.constant.dimension.Dimens.PADDING_MEDIUM
 import ar.edu.unlam.mobile.scaffolding.ui.constant.dimension.Dimens.PADDING_SMALL
+import ar.edu.unlam.mobile.scaffolding.ui.constant.text.TextConstant.DRAFT_SAVED
+import ar.edu.unlam.mobile.scaffolding.ui.screens.interfaces.UiState
 
 private const val DRAFT_BUTTON_TEXT = "Borrador"
 private const val POST_BUTTON_TEXT = "Publicar"
@@ -38,54 +40,47 @@ fun PostCreationScreen(
     postCreationViewModel: PostCreationViewModel,
     onPostAction: () -> Unit,
     onCancelAction: () -> Unit,
-    onShowSnackbar: (String) -> Unit
+    onShowSnackbar: (String) -> Unit,
 ) {
-
     val message by postCreationViewModel.message.collectAsState()
     val uiState by postCreationViewModel.uiState.collectAsState()
     val restoreState = { postCreationViewModel.restoreStatus() }
 
     when (val state = uiState) {
-
-        is PostCreationUiState.Idle -> {
-
+        is UiState.Idle -> {
             ShowPostCreationForm(
                 message,
                 onPostMessageChangeAction = { newMessage ->
                     postCreationViewModel.onMessageChange(
-                        newMessage
+                        newMessage,
                     )
                 },
                 onDraftAction = { postCreationViewModel.createDraft(message) },
                 onPostAction = { postCreationViewModel.createPost() },
-                onCancelAction = onCancelAction
+                onCancelAction = onCancelAction,
             )
         }
 
-        is PostCreationUiState.Loading -> {
-
+        is UiState.Loading -> {
             ShowLoadingStatusOnScreen()
         }
 
-        is PostCreationUiState.DraftSaved -> {
-
-            onShowSnackbar(DRAFT_CREATED_SNACKBAR_TEXT)
-            restoreState()
-            onCancelAction()
+        is UiState.Success -> {
+            if (state.data == DRAFT_SAVED) {
+                onShowSnackbar(DRAFT_CREATED_SNACKBAR_TEXT)
+                restoreState()
+                onCancelAction()
+            } else {
+                onShowSnackbar(POST_SNACKBAR_TEXT)
+                restoreState()
+                onPostAction()
+            }
         }
 
-        is PostCreationUiState.Success -> {
-
-            onShowSnackbar(POST_SNACKBAR_TEXT)
-            restoreState()
-            onPostAction()
-        }
-
-        is PostCreationUiState.Error -> {
-
+        is UiState.Error -> {
             ShowErrorMessageOnScreen(
                 restoreState,
-                state.errorMessage
+                state.error,
             )
         }
     }
@@ -97,23 +92,20 @@ private fun ShowPostCreationForm(
     onPostMessageChangeAction: (String) -> Unit,
     onDraftAction: () -> Unit,
     onPostAction: () -> Unit,
-    onCancelAction: () -> Unit
+    onCancelAction: () -> Unit,
 ) {
-
     Column(
-        modifier = Modifier
-            .padding(PADDING_MEDIUM)
-            .background(MaterialTheme.colorScheme.surface)
+        modifier =
+            Modifier
+                .padding(PADDING_MEDIUM)
+                .background(MaterialTheme.colorScheme.surface),
     ) {
-
         Row(
-            modifier = Modifier.padding(PADDING_MEDIUM)
+            modifier = Modifier.padding(PADDING_MEDIUM),
         ) {
-
             IconButton(
-                onClick = onCancelAction
+                onClick = onCancelAction,
             ) {
-
                 Icon(Icons.Default.Cancel, contentDescription = null)
             }
 
@@ -124,7 +116,6 @@ private fun ShowPostCreationForm(
                 modifier = Modifier.padding(PADDING_SMALL),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
             ) {
-
                 Text(DRAFT_BUTTON_TEXT)
             }
 
@@ -133,7 +124,6 @@ private fun ShowPostCreationForm(
                 modifier = Modifier.padding(PADDING_SMALL),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             ) {
-
                 Text(POST_BUTTON_TEXT)
             }
         }
@@ -142,9 +132,10 @@ private fun ShowPostCreationForm(
             value = message,
             placeholder = { Text(TEXTFIELD_PROMPT_TEXT) },
             onValueChange = { newMessage -> onPostMessageChangeAction(newMessage) },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(PADDING_LARGE),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(PADDING_LARGE),
             colors = TextFieldDefaults.colors(focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant),
             shape = RoundedCornerShape(PADDING_LARGE),
         )
@@ -152,15 +143,14 @@ private fun ShowPostCreationForm(
 }
 
 @Composable
-fun ShowErrorMessageOnScreen(onRestoreStateAction: () -> Unit, errorMessage: String) {
-
+fun ShowErrorMessageOnScreen(
+    onRestoreStateAction: () -> Unit,
+    errorMessage: String,
+) {
     Row(modifier = Modifier.padding(PADDING_MEDIUM)) {
-
         IconButton(
-
-            onClick = onRestoreStateAction
+            onClick = onRestoreStateAction,
         ) {
-
             Icon(Icons.Default.ArrowCircleLeft, contentDescription = null)
         }
 
@@ -170,7 +160,7 @@ fun ShowErrorMessageOnScreen(onRestoreStateAction: () -> Unit, errorMessage: Str
             "Ocurrió un error al procesar el post: $errorMessage",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.error,
-            modifier = Modifier.padding(PADDING_MEDIUM)
+            modifier = Modifier.padding(PADDING_MEDIUM),
         )
     }
 }

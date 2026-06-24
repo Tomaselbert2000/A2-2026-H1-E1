@@ -13,11 +13,15 @@ fun TuiterButton(
     @StringRes textId: Int,
     onClickAction: () -> Unit,
     buttonColor: ButtonColors,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isEnabled: Boolean = true,
 ) {
-
-    Button(onClick = onClickAction, modifier = modifier, colors = buttonColor) {
-
+    Button(
+        onClick = onClickAction,
+        modifier = modifier,
+        colors = buttonColor,
+        enabled = isEnabled,
+    ) {
         Text(stringResource(textId))
     }
 }

@@ -37,21 +37,19 @@ import ar.edu.unlam.mobile.scaffolding.ui.constant.dimension.Dimens.PADDING_SMAL
 
 @Composable
 fun PostCard(post: PostResponse) {
-
     Row(
-        modifier = Modifier
-            .padding(PADDING_MEDIUM)
-            .fillMaxWidth()
-            .clip(shape = RoundedCornerShape(PADDING_LARGE))
-            .background(MaterialTheme.colorScheme.surfaceVariant),
+        modifier =
+            Modifier
+                .padding(PADDING_MEDIUM)
+                .fillMaxWidth()
+                .clip(shape = RoundedCornerShape(PADDING_LARGE))
+                .background(MaterialTheme.colorScheme.surfaceVariant),
     ) {
-
         PostAvatar()
 
         Spacer(modifier = Modifier.width(PADDING_MEDIUM))
 
         Column(verticalArrangement = Arrangement.spacedBy(PADDING_SMALL)) {
-
             Row(horizontalArrangement = Arrangement.spacedBy(PADDING_SMALL)) {
                 PostText(
                     post.author,
@@ -62,14 +60,14 @@ fun PostCard(post: PostResponse) {
                 PostText(
                     "@usuario",
                     MaterialTheme.typography.bodyMedium,
-                    MaterialTheme.colorScheme.onSurfaceVariant
+                    MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
             PostText(
                 post.message,
                 MaterialTheme.typography.bodyMedium,
-                MaterialTheme.colorScheme.onSurface
+                MaterialTheme.colorScheme.onSurface,
             )
 
             PostActions(post.likes)
@@ -79,12 +77,12 @@ fun PostCard(post: PostResponse) {
 
 @Composable
 private fun PostAvatar() {
-
     Box(
-        modifier = Modifier
-            .size(AVATAR_SIZE)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceVariant),
+        modifier =
+            Modifier
+                .size(AVATAR_SIZE)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -96,68 +94,65 @@ private fun PostAvatar() {
 }
 
 @Composable
-private fun PostText(textToShow: String, textStyle: TextStyle, textColor: Color) {
-
+private fun PostText(
+    textToShow: String,
+    textStyle: TextStyle,
+    textColor: Color,
+) {
     Text(
         text = textToShow,
         style = textStyle,
         color = textColor,
-        modifier = Modifier.padding(PADDING_MEDIUM)
+        modifier = Modifier.padding(PADDING_MEDIUM),
     )
 }
 
 @Composable
 private fun PostActions(likes: Int) {
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-
         Row(
             modifier = Modifier.padding(PADDING_SMALL),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(PADDING_SMALL)
+            horizontalArrangement = Arrangement.spacedBy(PADDING_SMALL),
         ) {
-
             IconButton(
-                onClick = {}
+                onClick = {},
             ) {
-
                 Icon(Icons.Default.Favorite, contentDescription = null)
             }
 
             Text(
                 text = "$likes ${stringResource(R.string.post_likes_label)}",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
         Row(
             modifier = Modifier.padding(PADDING_SMALL),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(PADDING_SMALL)
+            horizontalArrangement = Arrangement.spacedBy(PADDING_SMALL),
         ) {
             IconButton(
-                onClick = {}
+                onClick = {},
             ) {
-
                 Icon(Icons.Default.AddComment, contentDescription = null)
             }
 
             Text(
                 text = stringResource(R.string.post_comments_label),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
         IconButton(
-            onClick = {}
+            onClick = {},
         ) {
-
             Icon(Icons.Default.Share, contentDescription = null)
         }
     }

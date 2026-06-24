@@ -7,10 +7,9 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.post.Post
 import kotlinx.coroutines.flow.Flow
 
 interface PostRepository {
-
     suspend fun createNewPost(
         createPostRequest: PostCreationRequest,
-        userToken: String
+        userToken: String,
     ): PostCreationResponse
 
     suspend fun getPostList(): List<PostResponse>

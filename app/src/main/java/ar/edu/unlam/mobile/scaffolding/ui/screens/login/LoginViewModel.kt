@@ -1,11 +1,13 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.login
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.TokenManager
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.interfaces.NetworkObject
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.login.LoginRequest
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.login.LoginResponse
 import ar.edu.unlam.mobile.scaffolding.data.repositories.interfaces.LoginRepository
-import ar.edu.unlam.mobile.scaffolding.ui.constant.text_constant.TextConstant.UNKNOWN_ERROR_MESSAGE
+import ar.edu.unlam.mobile.scaffolding.ui.constant.text.TextConstant.UNKNOWN_ERROR_MESSAGE
+import ar.edu.unlam.mobile.scaffolding.ui.screens.abstractions.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,68 +16,52 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
-    private val loginRepository: LoginRepository,
-    private val tokenManager: TokenManager
-) :
-    ViewModel() {
+class LoginViewModel
+    @Inject
+    constructor(
+        private val loginRepository: LoginRepository,
+        private val tokenManager: TokenManager,
+    ) : BaseViewModel<String>(),
+        NetworkObject<LoginRequest, LoginResponse> {
+        private val _email = MutableStateFlow("")
+        val email: StateFlow<String> = _email.asStateFlow()
 
-    private val _email = MutableStateFlow("")
-    val email: StateFlow<String> = _email.asStateFlow()
+        private val _password = MutableStateFlow("")
+        val password: StateFlow<String> = _password.asStateFlow()
 
-    private val _password = MutableStateFlow("")
-    val password: StateFlow<String> = _password.asStateFlow()
+        fun login() {
+            viewModelScope.launch {
+                setUiAsLoading()
 
-    private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
-    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+                try {
+                    val request = createRequestObject()
 
-    fun login() {
-        viewModelScope.launch {
+                    val response = createReponseObject(request)
 
-            _uiState.value = LoginUiState.Loading
+                    setUiAsSuccess(response.token)
 
-            try {
+                    tokenManager.saveToken(response.token)
+                } catch (exception: Exception) {
+                    val responseErrorMessage = exception.message ?: UNKNOWN_ERROR_MESSAGE
 
-                val emailString = email.value
-                val passwordString = password.value
-
-                val loginRequest = LoginRequest(emailString, passwordString)
-
-                val response = loginRepository.login(loginRequest)
-
-                _uiState.value = LoginUiState.Success(response.token)
-
-                tokenManager.saveToken(response.token)
-
-            } catch (exception: Exception) {
-
-                val responseMessage = exception.message ?: UNKNOWN_ERROR_MESSAGE
-
-                _uiState.value = LoginUiState.Error(responseMessage)
+                    setUiAsError(responseErrorMessage)
+                }
             }
         }
+
+        fun restoreStatus() {
+            setUiAsIdle()
+        }
+
+        fun updateEmailState(newEmailState: String) {
+            _email.value = newEmailState
+        }
+
+        fun updatePasswordState(newPasswordState: String) {
+            _password.value = newPasswordState
+        }
+
+        override suspend fun createRequestObject(): LoginRequest = LoginRequest(_email.value, _password.value)
+
+        override suspend fun createReponseObject(request: LoginRequest): LoginResponse = loginRepository.login(request)
     }
-
-    fun restoreStatus() {
-
-        _uiState.value = LoginUiState.Idle
-    }
-
-    fun updateEmailState(newEmailState: String) {
-
-        _email.value = newEmailState
-    }
-
-    fun updatePasswordState(newPasswordState: String) {
-
-        _password.value = newPasswordState
-    }
-}
-
-sealed interface LoginUiState {
-
-    data object Idle : LoginUiState
-    data object Loading : LoginUiState
-    data class Success(val responseToken: String) : LoginUiState
-    data class Error(val errorMessage: String) : LoginUiState
-}

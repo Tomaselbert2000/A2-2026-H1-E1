@@ -6,11 +6,10 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.register.
 import ar.edu.unlam.mobile.scaffolding.data.repositories.interfaces.RegisterRepository
 import javax.inject.Inject
 
-class RegisterRepositoryImpl @Inject constructor(private val tuiterApiService: TuiterApiService) :
-    RegisterRepository {
-
-    override suspend fun register(registerRequest: RegisterRequest): RegisterResponse {
-
-        return tuiterApiService.register(registerRequest)
+class RegisterRepositoryImpl
+    @Inject
+    constructor(
+        private val tuiterApiService: TuiterApiService,
+    ) : RegisterRepository {
+        override suspend fun register(registerRequest: RegisterRequest): RegisterResponse = tuiterApiService.register(registerRequest)
     }
-}

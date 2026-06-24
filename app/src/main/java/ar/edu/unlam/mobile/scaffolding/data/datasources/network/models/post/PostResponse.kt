@@ -11,5 +11,5 @@ data class PostResponse(
     @SerializedName("avatar_url") val avatarUrl: String,
     val likes: Int,
     val liked: Boolean,
-    val date: String
+    val date: String,
 )

@@ -16,9 +16,9 @@ val Context.dataStore by preferencesDataStore(name = "unlam_tuiter_preferences")
 @Module
 @InstallIn(SingletonComponent::class)
 object LocalModule {
-
     @Provides
     @Singleton
-    fun providePreferences(@ApplicationContext context: Context): DataStore<Preferences> =
-        context.dataStore
+    fun providePreferences(
+        @ApplicationContext context: Context,
+    ): DataStore<Preferences> = context.dataStore
 }

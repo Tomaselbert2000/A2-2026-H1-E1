@@ -21,19 +21,22 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.post.PostResponse
 import ar.edu.unlam.mobile.scaffolding.ui.components.feed.HomeFloatingActionButton
 import ar.edu.unlam.mobile.scaffolding.ui.components.post.PostCard
 import ar.edu.unlam.mobile.scaffolding.ui.components.shared.ShowLoadingStatusOnScreen
 import ar.edu.unlam.mobile.scaffolding.ui.constant.dimension.Dimens.PADDING_MEDIUM
+import ar.edu.unlam.mobile.scaffolding.ui.screens.interfaces.UiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.ShowErrorMessageOnScreen
 
 @Composable
-fun FeedScreen(feedViewModel: FeedViewModel, onNavigateToCreatePost: () -> Unit) {
-
+fun FeedScreen(
+    feedViewModel: FeedViewModel,
+    onNavigateToCreatePost: () -> Unit,
+) {
     val uiState by feedViewModel.uiState.collectAsState()
 
     LaunchedEffect(true) {
-
         feedViewModel.loadPosts()
     }
 
@@ -45,7 +48,7 @@ fun FeedScreen(feedViewModel: FeedViewModel, onNavigateToCreatePost: () -> Unit)
 
         FeedContent(
             modifier = Modifier.padding(paddingValues),
-            uiState
+            uiState,
         ) { feedViewModel.reloadPostList() }
     }
 }
@@ -53,47 +56,45 @@ fun FeedScreen(feedViewModel: FeedViewModel, onNavigateToCreatePost: () -> Unit)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar() {
-
     TopAppBar(
         title = {
             Text(
                 text = "Inicio",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
             )
         },
-        modifier = Modifier.padding(PADDING_MEDIUM)
+        modifier = Modifier.padding(PADDING_MEDIUM),
     )
 }
 
 @Composable
-private fun FeedContent(modifier: Modifier, uiState: FeedUiState, onRetryAction: () -> Unit) {
-
+private fun FeedContent(
+    modifier: Modifier,
+    uiState: UiState<List<PostResponse>>,
+    onRetryAction: () -> Unit,
+) {
     Box(modifier) {
-
         when (uiState) {
+            is UiState.Idle -> {}
 
-            is FeedUiState.Loading -> {
-
+            is UiState.Loading -> {
                 ShowLoadingStatusOnScreen()
             }
 
-            is FeedUiState.Success -> {
-
+            is UiState.Success -> {
                 LazyColumn {
-
-                    items(uiState.posts) { post ->
+                    items(uiState.data) { post ->
 
                         PostCard(post)
                     }
                 }
             }
 
-            is FeedUiState.Error -> {
-
+            is UiState.Error -> {
                 ShowErrorMessageOnScreen(
                     onRetryAction,
-                    errorMessage = uiState.message
+                    errorMessage = uiState.error,
                 )
             }
         }
@@ -102,16 +103,14 @@ private fun FeedContent(modifier: Modifier, uiState: FeedUiState, onRetryAction:
 
 @Composable
 private fun BottomBar() {
-
     NavigationBar {
-
         NavigationBarItem(
             selected = true,
             onClick = {},
             icon = {
                 Icon(Icons.Default.Home, contentDescription = null)
             },
-            label = { BottomBarTextLabel("Inicio") }
+            label = { BottomBarTextLabel("Inicio") },
         )
 
         NavigationBarItem(
@@ -120,7 +119,7 @@ private fun BottomBar() {
             icon = {
                 Icon(Icons.Default.AccountCircle, contentDescription = null)
             },
-            label = { BottomBarTextLabel("Perfil") }
+            label = { BottomBarTextLabel("Perfil") },
         )
 
         NavigationBarItem(
@@ -129,17 +128,16 @@ private fun BottomBar() {
             icon = {
                 Icon(Icons.Default.Settings, contentDescription = null)
             },
-            label = { BottomBarTextLabel("Ajustes") }
+            label = { BottomBarTextLabel("Ajustes") },
         )
     }
 }
 
 @Composable
 private fun BottomBarTextLabel(textToShow: String) {
-
     Text(
         text = textToShow,
         style = MaterialTheme.typography.labelMedium,
-        color = MaterialTheme.colorScheme.onSurface
+        color = MaterialTheme.colorScheme.onSurface,
     )
 }

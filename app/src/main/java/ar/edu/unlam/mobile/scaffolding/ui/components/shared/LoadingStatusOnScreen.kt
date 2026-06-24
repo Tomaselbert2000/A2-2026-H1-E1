@@ -14,18 +14,17 @@ import ar.edu.unlam.mobile.scaffolding.ui.constant.dimension.Dimens.PADDING_MEDI
 
 @Composable
 fun ShowLoadingStatusOnScreen() {
-
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CircularProgressIndicator()
         TuiterTextLabel(
             R.string.login_loading_indicator_label,
             MaterialTheme.typography.titleLarge,
             MaterialTheme.colorScheme.onSurface,
-            Modifier.padding(PADDING_MEDIUM)
+            Modifier.padding(PADDING_MEDIUM),
         )
     }
 }

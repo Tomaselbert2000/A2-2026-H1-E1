@@ -4,6 +4,5 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.login.Log
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.models.login.LoginResponse
 
 interface LoginRepository {
-
     suspend fun login(loginRequest: LoginRequest): LoginResponse
 }

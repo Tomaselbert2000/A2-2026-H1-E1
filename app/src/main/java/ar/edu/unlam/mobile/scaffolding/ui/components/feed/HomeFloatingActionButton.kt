@@ -8,11 +8,9 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun HomeFloatingActionButton(onClickAction: () -> Unit) {
-
     val buttonIcon = Icons.Default.Add
 
     FloatingActionButton(onClick = onClickAction) {
-
         Icon(buttonIcon, contentDescription = null)
     }
 }

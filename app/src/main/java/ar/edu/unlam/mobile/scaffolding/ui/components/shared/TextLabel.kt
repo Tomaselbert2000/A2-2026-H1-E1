@@ -13,9 +13,8 @@ fun TuiterTextLabel(
     @StringRes textId: Int,
     textStyle: TextStyle,
     textColor: Color,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
-
     Text(
         text = stringResource(textId),
         style = textStyle,

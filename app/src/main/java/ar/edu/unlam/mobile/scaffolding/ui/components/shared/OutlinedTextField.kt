@@ -12,22 +12,21 @@ import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun TuiterOutlinedTextField(
-    textId: String,
+    valueText: String,
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     @StringRes labelId: Int,
     visualTransFormation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
 ) {
-
     OutlinedTextField(
-        value = textId,
+        value = valueText,
         onValueChange = onTextChange,
         modifier = modifier,
         label = {
             Text(stringResource(labelId))
         },
         visualTransformation = visualTransFormation,
-        keyboardOptions = keyboardOptions
+        keyboardOptions = keyboardOptions,
     )
 }

@@ -25,10 +25,13 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.shared.TuiterOutlinedTextFi
 import ar.edu.unlam.mobile.scaffolding.ui.components.shared.TuiterTextLabel
 import ar.edu.unlam.mobile.scaffolding.ui.constant.dimension.Dimens.PADDING_MEDIUM
 import ar.edu.unlam.mobile.scaffolding.ui.constant.dimension.Dimens.PADDING_SMALL
+import ar.edu.unlam.mobile.scaffolding.ui.screens.interfaces.UiState
 
 @Composable
-fun RegisterScreen(registerViewModel: RegisterViewModel, onRegisterSuccess: () -> Unit) {
-
+fun RegisterScreen(
+    registerViewModel: RegisterViewModel,
+    onRegisterSuccess: () -> Unit,
+) {
     val uiState by registerViewModel.uiState.collectAsState()
     val nameState by registerViewModel.name.collectAsState()
     val emailState by registerViewModel.email.collectAsState()
@@ -37,9 +40,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel, onRegisterSuccess: () -
     val resetForm = { registerViewModel.resetForm() }
 
     when (val state = uiState) {
-
-        is RegisterUiState.Idle -> {
-
+        is UiState.Idle -> {
             ShowRegisterForm(
                 nameState,
                 emailState,
@@ -48,23 +49,20 @@ fun RegisterScreen(registerViewModel: RegisterViewModel, onRegisterSuccess: () -
                 { newEmailState -> registerViewModel.updateEmail(newEmailState) },
                 { newPasswordState -> registerViewModel.updatePassword(newPasswordState) },
                 { registerViewModel.register() },
-                resetForm
+                resetForm,
             )
         }
 
-        is RegisterUiState.Loading -> {
-
+        is UiState.Loading -> {
             ShowLoadingStatusOnScreen()
         }
 
-        is RegisterUiState.Success -> {
-
+        is UiState.Success -> {
             onRegisterSuccess()
         }
 
-        is RegisterUiState.Error -> {
-
-            ShowRegisterErrorScreen(state.errorMessage) { registerViewModel.setUiStateAsIdle() }
+        is UiState.Error -> {
+            ShowRegisterErrorScreen(state.error) { registerViewModel.setUiStateAsIdle() }
         }
     }
 }
@@ -78,87 +76,90 @@ fun ShowRegisterForm(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onRegisterButtonClick: () -> Unit,
-    onResetButtonClick: () -> Unit
+    onResetButtonClick: () -> Unit,
 ) {
-
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
         TuiterTextLabel(
             R.string.register_title_label,
             MaterialTheme.typography.headlineLarge,
             MaterialTheme.colorScheme.onSurface,
-            Modifier.padding(PADDING_MEDIUM)
+            Modifier.padding(PADDING_MEDIUM),
         )
 
         TuiterOutlinedTextField(
             name,
             { newName -> onNameChange(newName) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(PADDING_MEDIUM),
-            R.string.register_name_label
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(PADDING_MEDIUM),
+            R.string.register_name_label,
         )
 
         TuiterOutlinedTextField(
             email,
             { newEmail -> onEmailChange(newEmail) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(PADDING_MEDIUM),
-            R.string.email_label
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(PADDING_MEDIUM),
+            R.string.email_label,
         )
 
         TuiterOutlinedTextField(
             password,
             { newPassword -> onPasswordChange(newPassword) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(PADDING_MEDIUM),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(PADDING_MEDIUM),
             R.string.password_label,
             PasswordVisualTransformation(),
-            KeyboardOptions(keyboardType = KeyboardType.Password)
+            KeyboardOptions(keyboardType = KeyboardType.Password),
         )
 
         TuiterButton(
-            R.string.confirm_and_create_user,
+            R.string.confirm,
             onRegisterButtonClick,
             ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            modifier = Modifier.padding(PADDING_MEDIUM)
+            modifier = Modifier.padding(PADDING_MEDIUM),
         )
 
         TuiterButton(
             R.string.reset_form,
             onResetButtonClick,
             ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(PADDING_MEDIUM)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(PADDING_MEDIUM),
         )
     }
 }
 
 @Composable
-private fun ShowRegisterErrorScreen(errorMessage: String, onRetryButtonClick: () -> Unit) {
-
+private fun ShowRegisterErrorScreen(
+    errorMessage: String,
+    onRetryButtonClick: () -> Unit,
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
         Row(horizontalArrangement = Arrangement.spacedBy(PADDING_SMALL)) {
-
             TuiterTextLabel(
                 R.string.user_creation_error_label,
                 MaterialTheme.typography.titleMedium,
                 MaterialTheme.colorScheme.error,
-                Modifier.padding(PADDING_MEDIUM)
+                Modifier.padding(PADDING_MEDIUM),
             )
         }
 
@@ -166,14 +167,14 @@ private fun ShowRegisterErrorScreen(errorMessage: String, onRetryButtonClick: ()
             errorMessage,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(PADDING_MEDIUM)
+            modifier = Modifier.padding(PADDING_MEDIUM),
         )
 
         TuiterButton(
             R.string.retry_label,
             onRetryButtonClick,
             ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            modifier = Modifier.padding(PADDING_MEDIUM)
+            modifier = Modifier.padding(PADDING_MEDIUM),
         )
     }
 }
